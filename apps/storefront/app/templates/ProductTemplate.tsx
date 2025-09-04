@@ -11,7 +11,6 @@ import { ProductOptionSelectorRadio } from '@app/components/product/ProductOptio
 import { ProductOptionSelectorSelect } from '@app/components/product/ProductOptionSelectorSelect';
 import { ProductPrice } from '@app/components/product/ProductPrice';
 import { ProductPriceRange } from '@app/components/product/ProductPriceRange';
-import { ProductReviewStars } from '@app/components/reviews/ProductReviewStars';
 import { Share } from '@app/components/share';
 import { useCart } from '@app/hooks/useCart';
 import { useProductInventory } from '@app/hooks/useProductInventory';
@@ -19,7 +18,6 @@ import { useRegion } from '@app/hooks/useRegion';
 import { createLineItemSchema } from '@app/routes/api.cart.line-items.create';
 import HomeIcon from '@heroicons/react/24/solid/HomeIcon';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { StoreProductReviewStats } from '@lambdacurry/medusa-plugins-sdk';
 import { FetcherKeys } from '@libs/util/fetcher-keys';
 import {
   getFilteredOptionValues,
@@ -32,6 +30,7 @@ import truncate from 'lodash/truncate';
 import { type ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useFetcher } from 'react-router';
 import { RemixFormProvider, useRemixForm } from 'remix-hook-form';
+import { TextField } from '@lambdacurry/forms/remix-hook-form';
 
 /**
  * Generates breadcrumbs for a product page
@@ -67,8 +66,6 @@ const getBreadcrumbs = (product: StoreProduct) => {
 
 export interface ProductTemplateProps {
   product: StoreProduct;
-  reviewsCount: number;
-  reviewStats?: StoreProductReviewStats;
 }
 
 /**
@@ -80,7 +77,7 @@ const variantIsSoldOut: (variant: StoreProductVariant | undefined) => boolean = 
   return !!(variant?.manage_inventory && variant?.inventory_quantity! < 1);
 };
 
-export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductTemplateProps) => {
+export const ProductTemplate = ({ product }: ProductTemplateProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const addToCartFetcher = useFetcher<any>({ key: FetcherKeys.cart.createLineItem });
   const { toggleCartDrawer } = useCart();
@@ -89,10 +86,13 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
 
   // Combine both states to detect adding items as early as possible
   const isAddingToCart = ['submitting', 'loading'].includes(addToCartFetcher.state);
+  
+  const isCustomizable = product.tags?.some(tag => tag.value === 'customizable');
 
   const defaultValues = {
     productId: product.id!,
     quantity: '1',
+    customMessage: '',
     options: useMemo(() => {
       // Get the first variant as the default
       const firstVariant = product.variants?.[0];
@@ -345,7 +345,6 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
                             </header>
                           </div>
 
-                          <ProductReviewStars reviewsCount={reviewsCount} reviewStats={reviewStats} />
 
                           <section aria-labelledby="product-information" className="mt-4">
                             <h2 id="product-information" className="sr-only">
@@ -397,6 +396,22 @@ export const ProductTemplate = ({ product, reviewsCount, reviewStats }: ProductT
                                   />
                                 </div>
                               ))}
+                            </section>
+                          )}
+                          
+                          {isCustomizable && (
+                            <section aria-labelledby="customization" className="my-6">
+                              <h2 id="customization" className="sr-only">
+                                Product customization
+                              </h2>
+                              <FieldLabel className="mb-2">What should we write on your mug?</FieldLabel>
+                              <TextField
+                                name="customMessage"
+                                placeholder="Enter your message (max 40 characters)"
+                                maxLength={40}
+                                required={isCustomizable}
+                                helperText="Leave a personalized message for your mug"
+                              />
                             </section>
                           )}
 
