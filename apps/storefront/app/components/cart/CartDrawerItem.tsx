@@ -1,6 +1,7 @@
 import { Button } from '@app/components/common/buttons/Button';
 import { Image } from '@app/components/common/images/Image';
 import { useRemoveCartItem } from '@app/hooks/useRemoveCartItem';
+import { useLineItemCustomization } from '@app/hooks/useLineItemCustomization';
 import { formatLineItemPrice } from '@libs/util/prices';
 import { StoreCartLineItem } from '@medusajs/types';
 import clsx from 'clsx';
@@ -15,6 +16,7 @@ export interface CartDrawerItemProps {
 export const CartDrawerItem: FC<CartDrawerItemProps> = ({ item, currencyCode, isRemoving }) => {
   const removeCartItem = useRemoveCartItem();
   const handleRemoveFromCart = () => removeCartItem.submit(item);
+  const { customization } = useLineItemCustomization(item);
 
   return (
     <li
@@ -37,6 +39,9 @@ export const CartDrawerItem: FC<CartDrawerItemProps> = ({ item, currencyCode, is
             <div>
               <h3 className="text-base font-bold text-gray-900">{item.product_title}</h3>
               <p className="mt-0.5 text-sm text-gray-500">{item.variant_title}</p>
+              {customization?.custom_message && (
+                <p className="mt-1 text-sm text-gray-600 italic">"{customization.custom_message}"</p>
+              )}
             </div>
             <Button variant="link" onClick={handleRemoveFromCart} disabled={isRemoving} className="text-sm">
               {isRemoving ? 'Removing' : 'Remove'}
