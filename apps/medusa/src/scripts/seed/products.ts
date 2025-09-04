@@ -284,4 +284,67 @@ export const seedProducts = ({
       },
     }),
   },
+  {
+    title: 'Custom Mug',
+    description:
+      'Enjoy your favorite Barrio Beans coffee in our sleek ceramic mug. Personalize it with your name or a short message to make it uniquely yours. Perfect for gifts or treating yourself to a special coffee experience.',
+    handle: 'custom-mug',
+    status: ProductStatus.PUBLISHED,
+    category_ids: categories.filter(({ name }) => name === 'Accessories' || name === 'Merchandise').map(({ id }) => id),
+    tag_ids: tags.filter((t) => ['customizable'].includes(t.value)).map((t) => t.id),
+    thumbnail: 'https://png.pngtree.com/png-vector/20230903/ourmid/pngtree-white-mug-mockup-png-png-image_9948594.png',
+    shipping_profile_id,
+    images: [
+      {
+        url: 'https://png.pngtree.com/png-vector/20230903/ourmid/pngtree-white-mug-mockup-png-png-image_9948594.png',
+      },
+    ],
+    options: [
+      {
+        title: 'Color',
+        values: ['White', 'Black'],
+      },
+    ],
+    sales_channels: sales_channels.map(({ id }) => ({
+      id,
+    })),
+    variants: [
+      {
+        title: 'White',
+        sku: 'CUSTOM-MUG-WHITE',
+        options: {
+          Color: 'White',
+        },
+        manage_inventory: false,
+        prices: [
+          {
+            amount: 15.0,
+            currency_code: 'cad',
+          },
+          {
+            amount: 12.0,
+            currency_code: 'usd',
+          },
+        ],
+      },
+      {
+        title: 'Black',
+        sku: 'CUSTOM-MUG-BLACK',
+        options: {
+          Color: 'Black',
+        },
+        manage_inventory: false,
+        prices: [
+          {
+            amount: 15.0,
+            currency_code: 'cad',
+          },
+          {
+            amount: 12.0,
+            currency_code: 'usd',
+          },
+        ],
+      },
+    ],
+  },
 ];
