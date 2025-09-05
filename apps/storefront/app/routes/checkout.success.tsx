@@ -63,6 +63,9 @@ export default function CheckoutSuccessRoute() {
                         <Link to={`/products/${item.product_handle}`}>{item.product_title}</Link>
                       </h3>
                       <p className="text-sm font-normal text-gray-500">{item.variant_title}</p>
+                      {item.metadata?.custom_message && (
+                        <p className="text-sm font-normal text-gray-600 italic mt-1">"{item.metadata.custom_message}"</p>
+                      )}
                     </div>
                     <div className="flex flex-1 items-end">
                       <span className="font-normal backdrop:text-gray-500">Qty {item.quantity}</span>

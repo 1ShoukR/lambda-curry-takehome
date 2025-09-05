@@ -3,6 +3,7 @@ import { Button } from '@app/components/common/buttons/Button';
 import { Image } from '@app/components/common/images/Image';
 import { useCheckout } from '@app/hooks/useCheckout';
 import { useRemoveCartItem } from '@app/hooks/useRemoveCartItem';
+import { useLineItemCustomization } from '@app/hooks/useLineItemCustomization';
 import { formatPrice } from '@libs/util/prices';
 import { StoreCart, StoreCartLineItem } from '@medusajs/types';
 import { FC } from 'react';
@@ -23,6 +24,7 @@ export const CheckoutOrderSummaryItem: FC<CheckoutOrderSummaryItemProps> = ({ it
   const removeCartItem = useRemoveCartItem();
   const handleRemoveFromCart = () => removeCartItem.submit(item);
   const isRemovingFromCart = ['loading', 'submitting'].includes(removeCartItem.state);
+  const { customization } = useLineItemCustomization(item);
 
   if (!cart) return null;
 
@@ -45,6 +47,9 @@ export const CheckoutOrderSummaryItem: FC<CheckoutOrderSummaryItemProps> = ({ it
               </Link>
             </h4>
             <p className="mt-0.5 text-sm text-gray-500">{item.variant_title}</p>
+            {customization?.custom_message && (
+              <p className="mt-1 text-sm text-gray-600 italic">"{customization.custom_message}"</p>
+            )}
           </div>
 
           <div className="ml-4 flow-root flex-shrink-0">
